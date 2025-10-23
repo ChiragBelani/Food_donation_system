@@ -1,0 +1,141 @@
+<form id="signup-form" action="/auth/signup" method="POST" class="w-50 bg-white p-5 m-auto rounded shadow-sm" style="min-width: 320px;">
+    <h3 class="text-center mb-4">User Signup</h3>
+
+    <% if (typeof errors !== 'undefined') { %>
+        <% errors.forEach(function(error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% }); %>
+    <% } %>
+
+    <div class="mb-3">
+        <label for="first-name" class="form-label fw-bold">First name</label>
+        <input type="text" name="firstName" class="form-control" id="first-name" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="last-name" class="form-label fw-bold">Last name</label>
+        <input type="text" name="lastName" class="form-control" id="last-name" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label fw-bold">Email address</label>
+        <input type="email" name="email" class="form-control" id="email" required>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button type="button" id="get-otp" class="btn btn-secondary w-50 me-2">Get OTP</button>
+        <input type="number" name="otp" class="form-control w-50" id="otp" placeholder="Enter OTP..." required disabled>
+    </div>
+
+    <div class="mb-3">
+        <label for="password1" class="form-label fw-bold">Password</label>
+        <input type="password" name="password1" class="form-control" id="password1" required disabled>
+    </div>
+
+    <div class="mb-3">
+        <label for="password2" class="form-label fw-bold">Confirm Password</label>
+        <input type="password" name="password2" class="form-control" id="password2" required disabled>
+    </div>
+
+    <div class="mb-4">
+        <label for="role" class="form-label fw-bold">Signup as</label>
+        <select class="form-select" name="role" id="role" disabled>
+            <option value="donor">Donor</option>
+            <option value="agent">Agent</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
+    
+    <button type="submit" id="signup-btn" class="btn btn-primary w-100 mt-3" disabled>Signup</button>
+</form>
+
+<script>
+const getOtpBtn = document.getElementById('get-otp');
+const otpInput = document.getElementById('otp');
+const password1 = document.getElementById('password1');
+const password2 = document.getElementById('password2');
+const role = document.getElementById('role');
+const signupBtn = document.getElementById('signup-btn');
+
+let otpVerified = false;
+
+getOtpBtn.addEventListener('click', async () => {
+    const email = document.getElementById('email').value;
+    if (!email) return alert("Please enter your email first.");
+
+    getOtpBtn.disabled = true; // lock button to prevent spam
+    getOtpBtn.textContent = "Sending...";
+
+    try {
+        const res = await fetch('/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.message || "Failed to send OTP");
+            getOtpBtn.disabled = false;
+            getOtpBtn.textContent = "Get OTP";
+            return;
+        }
+
+        alert("✅ OTP sent to your email. Valid for 5 minutes.");
+        otpInput.disabled = false;
+
+        // Re-enable OTP button after 60 seconds
+        setTimeout(() => {
+            getOtpBtn.disabled = false;
+            getOtpBtn.textContent = "Get OTP";
+        }, 60000);
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ Error sending OTP. Try again.");
+        getOtpBtn.disabled = false;
+        getOtpBtn.textContent = "Get OTP";
+    }
+});
+
+otpInput.addEventListener('input', async () => {
+    const otp = otpInput.value;
+    const email = document.getElementById('email').value;
+
+    if (otp.length !== 6) {
+        otpInput.style.borderColor = '';
+        signupBtn.disabled = true;
+        return;
+    }
+
+    try {
+        const res = await fetch('/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            otpInput.style.borderColor = 'green';
+            password1.disabled = false;
+            password2.disabled = false;
+            role.disabled = false;
+            signupBtn.disabled = false;
+        } else {
+            otpInput.style.borderColor = 'red';
+            password1.disabled = true;
+            password2.disabled = true;
+            role.disabled = true;
+            signupBtn.disabled = true;
+        }
+    } catch (err) {
+        console.error(err);
+        alert("❌ Error verifying OTP");
+    }
+});
+
+</script>

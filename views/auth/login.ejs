@@ -1,0 +1,31 @@
+<div class="m-0 pt-5 w-100 bg-img-2">
+    <form action="/auth/login" method="POST" class="w-50 bg-white p-5 m-auto rounded shadow-sm" style="min-width: 320px;">
+        <h3 class="text-center mb-4">User Login</h3>
+
+        <% if (typeof errors !== 'undefined') { %>
+            <% errors.forEach(function(error) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= error.msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% }); %>
+        <% } %>
+
+        <div class="mb-3">
+            <label for="email" class="form-label fw-bold">Email address</label>
+            <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email..." required autofocus>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label fw-bold">Password</label>
+            <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password..." required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+
+        <div class="text-center mt-4">
+            <span>Don't have an account?</span>
+            <a href="/auth/signup" class="fw-bold">Signup here</a>
+        </div>
+    </form>
+</div>
