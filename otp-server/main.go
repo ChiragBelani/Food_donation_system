@@ -40,8 +40,8 @@ func main() {
 	http.HandleFunc("/send-donation-request", sendDonationRequestEmail)
 
 
-	fmt.Println("✅ Email server running on :9090")
-	log.Fatal(http.ListenAndServe(":9090", nil))
+	fmt.Println("✅ Email server running on :9099")
+	log.Fatal(http.ListenAndServe(":9099", nil))
 }
 
 // Handler for sending OTP email
