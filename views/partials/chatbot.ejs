@@ -1,0 +1,53 @@
+<!-- Chatbot Widget -->
+<div id="chatbot-widget" class="chatbot-widget">
+    <!-- Chat Window -->
+    <div id="chat-window" class="chat-window d-none">
+        <div class="chat-header">
+            <div class="d-flex align-items-center">
+                <div class="bot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ms-2">
+                    <h6 class="mb-0 fw-bold">FoodBot</h6>
+                    <small class="text-white-50">Online</small>
+                </div>
+            </div>
+            <button id="close-chat" class="btn btn-sm text-white"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <!-- Welcome Message -->
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello! 👋 I'm FoodBot. How can I help you today?
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="btn btn-sm btn-outline-primary rounded-pill mb-2"
+                    onclick="sendQuickMessage('I want to donate food')">Donate Food</button>
+                <button class="btn btn-sm btn-outline-primary rounded-pill mb-2"
+                    onclick="sendQuickMessage('How does it work?')">How it works</button>
+                <button class="btn btn-sm btn-outline-primary rounded-pill mb-2"
+                    onclick="sendQuickMessage('Contact support')">Contact Support</button>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <form id="chat-form" class="d-flex align-items-center">
+                <input type="text" id="chat-input" class="form-control border-0" placeholder="Type a message..."
+                    autocomplete="off">
+                <button type="submit" class="btn btn-primary rounded-circle ms-2">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button id="chatbot-toggle" class="chatbot-toggle btn btn-primary rounded-circle shadow-lg">
+        <i class="fas fa-comment-dots fa-2x"></i>
+    </button>
+</div>
