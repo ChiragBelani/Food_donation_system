@@ -1,41 +1,79 @@
-<main>
+<main style="margin-top: 70px;">
 	<%- include('../partials/donorSidebar') %>
-	
-	<div id="main-wrapper">
-		
-		<div class="bg-white shadow-sm p-3">
-			<span class="me-3" id="sidebar-toggler-btn"><i class="fas fa-bars"></i></span>
-			<h5 class="m-0 color-theme d-inline-block">Previous Donations</h5>
+
+		<div id="main-wrapper">
+			<div class="d-flex align-items-center mb-4">
+				<button class="btn btn-light d-lg-none me-3" id="sidebar-toggler-btn"><i
+						class="fas fa-bars"></i></button>
+				<h2 class="fw-bold text-dark mb-0">Donation History</h2>
+			</div>
+
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="bg-light">
+								<tr>
+									<th scope="col" class="ps-4">#</th>
+									<th scope="col">Food Type</th>
+									<th scope="col">Quantity</th>
+									<th scope="col">Status</th>
+									<th scope="col">Cooking Time</th>
+									<th scope="col">Agent</th>
+									<th scope="col">Collected At</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% if(previousDonations.length===0) { %>
+									<tr>
+										<td colspan="7" class="text-center py-4 text-muted">No history found.</td>
+									</tr>
+									<% } %>
+										<% for(let i=0; i<previousDonations.length; i++) { %>
+											<tr>
+												<td class="ps-4 fw-bold text-muted">
+													<%= i+1 %>
+												</td>
+												<td><span class="fw-bold text-dark">
+														<%= previousDonations[i].foodType %>
+													</span></td>
+												<td>
+													<%= previousDonations[i].quantity %>
+												</td>
+												<td>
+													<span
+														class="badge rounded-pill bg-<%= previousDonations[i].status === 'collected' ? 'success' : 'secondary' %>">
+														<%= previousDonations[i].status %>
+													</span>
+												</td>
+												<td class="text-muted small">
+													<%= previousDonations[i].cookingTime.toLocaleString("en-IN", {
+														dateStyle: "medium" , timeStyle: "short" }) %>
+												</td>
+												<td>
+													<% if(previousDonations[i].agent) { %>
+														<div class="d-flex align-items-center">
+															<div class="user-icon-sm bg-secondary text-white rounded-circle me-2 d-flex align-items-center justify-content-center"
+																style="width: 25px; height: 25px; font-size: 0.8rem;">
+																<%= previousDonations[i].agent.firstName[0] %>
+															</div>
+															<%= previousDonations[i].agent.firstName %>
+														</div>
+														<% } else { %>
+															-
+															<% } %>
+												</td>
+												<td class="text-muted small">
+													<%= previousDonations[i].collectionTime ?
+														previousDonations[i].collectionTime.toLocaleString("en-IN", {
+														dateStyle: "medium" , timeStyle: "short" }) : '-' %>
+												</td>
+											</tr>
+											<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
-		
-		<div class="col col-sm-10 col-12 m-auto my-4" style="max-height: 75%; overflow: auto;">
-			<table class="table table-info table-striped table-hover m-0 bg-white">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Food type</th>
-						<th scope="col">Quantity</th>
-						<th scope="col">Status</th>
-						<th scope="col">Cooking Time</th>
-						<th scope="col">Agent assigned</th>
-						<th scope="col">Collection Time</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% for(let i=0; i<previousDonations.length; i++) { %>
-						<tr>
-							<th scope="row"> <%= i+1 %> </th>
-							<td> <%= previousDonations[i].foodType %> </td>
-							<td> <%= previousDonations[i].quantity %> </td>
-							<td class="fw-bold text-<%= previousDonations[i].status %>"> <%= previousDonations[i].status %> </td>
-							<td> <%= previousDonations[i].cookingTime.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short"}) %> </td>
-							<td> <%= previousDonations[i].agent.firstName + " " + previousDonations[i].agent.lastName %> </td>
-							<td> <%= previousDonations[i].collectionTime.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short"}) %> </td>
-						</tr>
-					<% } %>
-				</tbody>
-			</table>
-		</div>
-		
-	</div>
 </main>

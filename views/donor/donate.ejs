@@ -1,55 +1,71 @@
-<main>
+<main style="margin-top: 70px;">
 	<%- include('../partials/donorSidebar') %>
-	
-	<div id="main-wrapper">
-		<div class="bg-white shadow-sm p-3">
-			<span class="me-3" id="sidebar-toggler-btn"><i class="fas fa-bars"></i></span>
-			<h5 class="m-0 color-theme d-inline-block">Donate</h5>
+
+		<div id="main-wrapper">
+			<div class="d-flex align-items-center mb-4">
+				<button class="btn btn-light d-lg-none me-3" id="sidebar-toggler-btn"><i
+						class="fas fa-bars"></i></button>
+				<h2 class="fw-bold text-dark mb-0">Donate Food</h2>
+			</div>
+
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-4">
+					<h5 class="card-title fw-bold mb-4 text-primary">Donation Details</h5>
+					<form action="/donor/donate" method="POST">
+						<div class="mb-4">
+							<label for="food" class="form-label">Food Type</label>
+							<input type="text" name="donation[foodType]" class="form-control" id="food"
+								placeholder="e.g., Rice, Bread, Curry..." required autofocus>
+						</div>
+
+						<div class="row g-3 mb-4">
+							<div class="col-md-6">
+								<label for="quantity" class="form-label">Quantity</label>
+								<input type="text" name="donation[quantity]" class="form-control" id="quantity"
+									placeholder="e.g., 5 kg, 10 packets..." required>
+							</div>
+
+							<div class="col-md-6">
+								<label for="time" class="form-label">Cooking Time</label>
+								<input type="datetime-local" name="donation[cookingTime]" class="form-control" id="time"
+									required>
+							</div>
+						</div>
+
+						<h5 class="card-title fw-bold mb-4 text-primary mt-5">Collection Details</h5>
+						<div class="row g-3 mb-4">
+							<div class="col-md-8">
+								<label for="address" class="form-label">Pickup Address</label>
+								<input type="text" name="donation[address]" class="form-control" id="address"
+									placeholder="Enter full address" value="<%= currentUser.address %>" required>
+							</div>
+
+							<div class="col-md-4">
+								<label for="phone" class="form-label">Phone Number</label>
+								<input type="number" name="donation[phone]" class="form-control" id="phone"
+									placeholder="Enter phone number" value="<%= currentUser.phone %>" required>
+							</div>
+						</div>
+
+						<div class="mb-4">
+							<label for="msg" class="form-label">Message (Optional)</label>
+							<textarea name="donation[donorToAdminMsg]" class="form-control" id="msg" rows="3"
+								placeholder="Any specific instructions or notes..."></textarea>
+						</div>
+
+						<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+							<button type="submit" class="btn btn-primary btn-lg px-5">Submit Donation</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
-		
-		<form action="/donor/donate" method="POST" class="border m-4 my-3 p-4 bg-white rounded-2 shadow">
-			<div class="mb-4">
-				<label for="food" class="form-label">Food type</label>
-				<input type="text" name="donation[foodType]" class="form-control" id="food" placeholder="Enter food.." required autofocus>
-			</div>
-			
-			<div class="row">
-				<div class="mb-4 col-sm-6">
-					<label for="quantity" class="form-label">Quantity</label>
-					<input type="text" name="donation[quantity]" class="form-control" id="quantity" placeholder="Enter quantity of food.." required>
-				</div>
-				
-				<div class="mb-4 col-sm-6">
-					<label for="time" class="form-label">Time of cooking</label>
-					<input type="datetime-local" name="donation[cookingTime]" class="form-date-input" id="time" required>
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="mb-4 col-sm-8">
-					<label for="address" class="form-label">Address to collect</label>
-					<input type="text" name="donation[address]" class="form-control" id="address" placeholder="Enter address.." value="<%= currentUser.address %>" required>
-				</div>
-				
-				<div class="mb-4 col-sm-4">
-					<label for="phone" class="form-label">Phone</label>
-					<input type="number" name="donation[phone]" class="form-control" id="phone" placeholder="Enter phone.." value="<%= currentUser.phone %>" required>
-				</div>
-			</div>
-			
-			<div class="mb-4">
-				<label for="msg" class="form-label">Want to write some message?</label>
-				<textarea type="text" name="donation[donorToAdminMsg]" class="form-control" id="msg" placeholder="You can write here some msg.."></textarea>
-			</div>
-			
-			<button type="submit" class="btn w-75 d-block m-auto mt-4">Submit</button>
-		</form>
-		
-	</div>
 </main>
 
 <script>
 	const d = new Date();
-	const dateString = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "T" + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-	document.getElementById("time").value = dateString;
+	// Format to local ISO string for datetime-local input
+	const offset = d.getTimezoneOffset() * 60000;
+	const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
+	document.getElementById("time").value = localISOTime;
 </script>
