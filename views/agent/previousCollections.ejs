@@ -1,37 +1,64 @@
-<main>
+<main style="margin-top: 70px;">
 	<%- include('../partials/agentSidebar') %>
-	
-	<div id="main-wrapper">
-		
-		<div class="bg-white shadow-sm p-3">
-			<span class="me-3" id="sidebar-toggler-btn"><i class="fas fa-bars"></i></span>
-			<h5 class="m-0 color-theme d-inline-block">Previous Collections</h5>
+
+		<div id="main-wrapper">
+			<div class="d-flex align-items-center mb-4">
+				<button class="btn btn-light d-lg-none me-3" id="sidebar-toggler-btn"><i
+						class="fas fa-bars"></i></button>
+				<h2 class="fw-bold text-dark mb-0">Collection History</h2>
+			</div>
+
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="bg-light">
+								<tr>
+									<th scope="col" class="ps-4">#</th>
+									<th scope="col">Donor Name</th>
+									<th scope="col">Address</th>
+									<th scope="col">Phone</th>
+									<th scope="col" class="text-end pe-4">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% if(previousCollections.length===0) { %>
+									<tr>
+										<td colspan="5" class="text-center py-4 text-muted">No history found.</td>
+									</tr>
+									<% } %>
+										<% for(let i=0; i<previousCollections.length; i++) { %>
+											<tr>
+												<td class="ps-4 fw-bold text-muted">
+													<%= i+1 %>
+												</td>
+												<td>
+													<div class="d-flex align-items-center">
+														<div class="user-icon-sm bg-success text-white rounded-circle me-2 d-flex align-items-center justify-content-center"
+															style="width: 30px; height: 30px; font-size: 0.9rem;">
+															<%= previousCollections[i].donor.firstName[0] %>
+														</div>
+														<%= previousCollections[i].donor.firstName + " " +
+															previousCollections[i].donor.lastName %>
+													</div>
+												</td>
+												<td class="text-truncate" style="max-width: 200px;"
+													title="<%= previousCollections[i].address %>">
+													<%= previousCollections[i].address %>
+												</td>
+												<td>
+													<%= previousCollections[i].phone %>
+												</td>
+												<td class="text-end pe-4">
+													<a href="/agent/collection/view/<%= previousCollections[i]._id %>"
+														class="btn btn-sm btn-outline-secondary">View Details</a>
+												</td>
+											</tr>
+											<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
-		
-		<div class="col col-sm-10 col-12 m-auto my-4" style="max-height: 75%; overflow: auto;">
-			<table class="table table-info table-striped table-hover m-0 bg-white">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Donor name</th>
-						<th scope="col">Address collected</th>
-						<th scope="col">Phone</th>
-						<th scope="col">Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% for(let i=0; i<previousCollections.length; i++) { %>
-						<tr>
-							<th scope="row"> <%= i+1 %> </th>
-							<td> <%= previousCollections[i].donor.firstName + " " + previousCollections[i].donor.lastName %> </td>
-							<td> <%= previousCollections[i].address %> </td>
-							<td> <%= previousCollections[i].phone %> </td>
-							<td><a href="/agent/collection/view/<%= previousCollections[i]._id %>" class="btn">View</a></td>
-						</tr>
-					<% } %>
-				</tbody>
-			</table>
-		</div>
-		
-	</div>
 </main>

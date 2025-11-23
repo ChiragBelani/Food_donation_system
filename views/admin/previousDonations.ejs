@@ -1,39 +1,70 @@
-<main>
+<main style="margin-top: 70px;">
 	<%- include('../partials/adminSidebar') %>
-	
-	<div id="main-wrapper">
-		
-		<div class="bg-white shadow-sm p-3">
-			<span class="me-3" id="sidebar-toggler-btn"><i class="fas fa-bars"></i></span>
-			<h5 class="m-0 color-theme d-inline-block">Previous Donations</h5>
+
+		<div id="main-wrapper">
+			<div class="d-flex align-items-center mb-4">
+				<button class="btn btn-light d-lg-none me-3" id="sidebar-toggler-btn"><i
+						class="fas fa-bars"></i></button>
+				<h2 class="fw-bold text-dark mb-0">Donation History</h2>
+			</div>
+
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="bg-light">
+								<tr>
+									<th scope="col" class="ps-4">#</th>
+									<th scope="col">Donor Name</th>
+									<th scope="col">Food Type</th>
+									<th scope="col">Quantity</th>
+									<th scope="col">Status</th>
+									<th scope="col" class="text-end pe-4">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% if(previousDonations.length===0) { %>
+									<tr>
+										<td colspan="6" class="text-center py-4 text-muted">No history found.</td>
+									</tr>
+									<% } %>
+										<% for(let i=0; i<previousDonations.length; i++) { %>
+											<tr>
+												<td class="ps-4 fw-bold text-muted">
+													<%= i+1 %>
+												</td>
+												<td>
+													<div class="d-flex align-items-center">
+														<div class="user-icon-sm bg-secondary text-white rounded-circle me-2 d-flex align-items-center justify-content-center"
+															style="width: 30px; height: 30px; font-size: 0.9rem;">
+															<%= previousDonations[i].donor.firstName[0] %>
+														</div>
+														<%= previousDonations[i].donor.firstName + " " +
+															previousDonations[i].donor.lastName %>
+													</div>
+												</td>
+												<td>
+													<%= previousDonations[i].foodType %>
+												</td>
+												<td>
+													<%= previousDonations[i].quantity %>
+												</td>
+												<td>
+													<span
+														class="badge bg-<%= previousDonations[i].status === 'collected' ? 'success' : 'secondary' %>">
+														<%= previousDonations[i].status.toUpperCase() %>
+													</span>
+												</td>
+												<td class="text-end pe-4">
+													<a href="/admin/donation/view/<%= previousDonations[i]._id %>"
+														class="btn btn-sm btn-outline-secondary">View Details</a>
+												</td>
+											</tr>
+											<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
-		
-		<div class="col col-sm-10 col-12 m-auto my-4" style="max-height: 75%; overflow: auto;">
-			<table class="table table-info table-striped table-hover m-0 bg-white">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Donor name</th>
-						<th scope="col">Food type</th>
-						<th scope="col">Quantity</th>
-						<th scope="col">Status</th>
-						<th scope="col">Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% for(let i=0; i<previousDonations.length; i++) { %>
-						<tr>
-							<th scope="row"> <%= i+1 %> </th>
-							<td> <%= previousDonations[i].donor.firstName + " " + previousDonations[i].donor.lastName %> </td>
-							<td> <%= previousDonations[i].foodType %> </td>
-							<td> <%= previousDonations[i].quantity %> </td>
-							<td class="fw-bold text-<%= previousDonations[i].status %>"> <%= previousDonations[i].status %> </td>
-							<td><a href="/admin/donation/view/<%= previousDonations[i]._id %>" class="btn">View</a></td>
-						</tr>
-					<% } %>
-				</tbody>
-			</table>
-		</div>
-		
-	</div>
 </main>

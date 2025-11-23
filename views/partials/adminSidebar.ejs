@@ -1,11 +1,108 @@
-<div id="sidebar">
-	<ul id="sidebar-nav">
-		<li>Welcome <%= currentUser.firstName %></li>
-		<li><a href="/admin/dashboard">Dashboard</a></li>
-		<li><a href="/admin/donations/pending">Pending Donations</a></li>
-		<li><a href="/admin/donations/previous">Previous Donations</a></li>
-		<li><a href="/admin/agents">Agents</a></li>
-		<li><a href="/admin/profile">My Profile</a></li>
-		<li><a href="/auth/logout" class="btn">Logout</a></li>
+<div id="sidebar" class="bg-white shadow-sm h-100 d-flex flex-column">
+	<div class="p-4 border-bottom">
+		<div class="d-flex align-items-center">
+			<div class="user-icon me-3 bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
+				style="width: 45px; height: 45px; font-size: 1.2rem;">
+				<%= currentUser.firstName[0].toUpperCase() %>
+			</div>
+			<div>
+				<h6 class="mb-0 fw-bold">
+					<%= currentUser.firstName %>
+						<%= currentUser.lastName %>
+				</h6>
+				<small class="text-muted">Administrator</small>
+			</div>
+		</div>
+	</div>
+	<ul class="nav flex-column p-3 flex-grow-1">
+		<li class="nav-item mb-2">
+			<a href="/admin/dashboard"
+				class="nav-link text-dark rounded p-3 <%= (typeof title != 'undefined' && title == 'Dashboard') ? 'active bg-dark text-white' : '' %>">
+				<i class="fas fa-tachometer-alt me-3"></i>Dashboard
+			</a>
+		</li>
+		<li class="nav-item mb-2">
+			<a href="/admin/donations/pending"
+				class="nav-link text-dark rounded p-3 <%= (typeof title != 'undefined' && title == 'Pending Donations') ? 'active bg-dark text-white' : '' %>">
+				<i class="fas fa-clipboard-list me-3"></i>Pending Requests
+			</a>
+		</li>
+		<li class="nav-item mb-2">
+			<a href="/admin/donations/previous"
+				class="nav-link text-dark rounded p-3 <%= (typeof title != 'undefined' && title == 'Previous Donations') ? 'active bg-dark text-white' : '' %>">
+				<i class="fas fa-history me-3"></i>History
+			</a>
+		</li>
+		<li class="nav-item mb-2">
+			<a href="/admin/agents"
+				class="nav-link text-dark rounded p-3 <%= (typeof title != 'undefined' && title == 'Agents') ? 'active bg-dark text-white' : '' %>">
+				<i class="fas fa-users me-3"></i>Manage Agents
+			</a>
+		</li>
+		<li class="nav-item mb-2">
+			<a href="/admin/profile"
+				class="nav-link text-dark rounded p-3 <%= (typeof title != 'undefined' && title == 'Profile') ? 'active bg-dark text-white' : '' %>">
+				<i class="fas fa-user-cog me-3"></i>Profile
+			</a>
+		</li>
 	</ul>
+	<div class="p-3 border-top">
+		<a href="/auth/logout" class="btn btn-outline-danger w-100">
+			<i class="fas fa-sign-out-alt me-2"></i>Logout
+		</a>
+	</div>
 </div>
+
+<style>
+	#sidebar {
+		width: 280px;
+		position: fixed;
+		top: 70px;
+		bottom: 0;
+		left: 0;
+		z-index: 100;
+		transition: all 0.3s;
+		overflow-y: auto;
+	}
+
+	#main-wrapper {
+		margin-left: 280px;
+		padding: 2rem;
+		transition: all 0.3s;
+	}
+
+	@media (max-width: 992px) {
+		#sidebar {
+			margin-left: -280px;
+		}
+
+		#sidebar.active {
+			margin-left: 0;
+		}
+
+		#main-wrapper {
+			margin-left: 0;
+		}
+	}
+
+	.nav-link:hover {
+		background-color: rgba(41, 47, 54, 0.1);
+		color: var(--dark-color) !important;
+	}
+
+	.nav-link.active:hover {
+		background-color: var(--dark-color);
+		color: white !important;
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const toggler = document.getElementById('sidebar-toggler-btn');
+		if (toggler) {
+			toggler.addEventListener('click', () => {
+				document.getElementById('sidebar').classList.toggle('active');
+			});
+		}
+	});
+</script>
