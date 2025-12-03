@@ -1,51 +1,86 @@
-const processMessage = (message, user) => {
+const OpenAI = require("openai");
+require("dotenv").config();
+
+// Initialize OpenAI (configured for Groq)
+const openai = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: "https://api.groq.com/openai/v1",
+});
+
+const processMessage = async (message, user) => {
     if (!message) return "I didn't catch that. Could you say it again?";
     const msg = message.toLowerCase();
-    let response = "";
 
-    // Greetings
-    if (msg.match(/\b(hi|hello|hey|greetings)\b/)) {
-        if (user) {
-            return `Hello ${user.firstName}! How can I help you with your food donation today?`;
-        }
-        return "Hello! Welcome to FoodShare. How can I help you today?";
-    }
+    // --- Helper for personalized greeting ---
+    const getUserName = () => user ? user.firstName : "friend";
+    const getUserRole = () => user ? user.role : "guest";
 
-    // Donation related
-    if (msg.includes("donate") || msg.includes("donation") || msg.includes("give food")) {
+    // --- 1. Rule-Based Triggers (Fast & Specific) ---
+
+    // Donation Specifics (Hardcoded for accuracy)
+    if (msg.includes("donate") || msg.includes("give food")) {
         if (user) {
             if (user.role === 'donor') {
-                return "That's great! You can start a new donation by clicking the 'Donate Food' button in your dashboard or typing 'new donation'.";
+                return "Great! 🍲 Go to your **Dashboard** and click the **Donate Food** button to create a new request.";
             } else if (user.role === 'agent') {
-                return "As an agent, you can view pending collections in your dashboard.";
-            } else {
-                return "Please login as a donor to donate food.";
+                return "As an Agent, your role is to collect food. If you want to donate, you'll need to create a separate Donor account.";
+            } else if (user.role === 'admin') {
+                return "Admins manage the system. To donate, please use a Donor account.";
             }
         }
-        return "To donate food, you'll need to sign up as a Donor first. Would you like me to guide you to the signup page?";
+        return "To donate, you first need to **Sign Up** as a Donor. It only takes a minute! Click 'Sign Up' in the top right.";
     }
 
-    // How it works
-    if (msg.includes("how") && (msg.includes("work") || msg.includes("process"))) {
-        return "It's simple! \n1. Donors post leftover food details. \n2. We verify and accept the request. \n3. An agent picks up the food and distributes it to the needy.";
+    // Agent Specifics
+    if (msg.includes("agent") || msg.includes("volunteer")) {
+        if (user && user.role === 'agent') {
+            return "Thanks for being a hero! 🦸‍♂️ Check your **Dashboard** for 'Pending Collections' to see donations assigned to you.";
+        }
+        return "Agents are our superheroes! 🦸‍♀️ They pick up food from donors and distribute it to the needy. Want to join? Sign up and choose 'Agent' as your role.";
     }
 
-    // Signup/Login
-    if (msg.includes("sign up") || msg.includes("register") || msg.includes("create account")) {
-        return "You can sign up by clicking the 'Sign Up' button in the top right corner. We have roles for Donors and Agents.";
-    }
+    // --- 2. Groq AI Fallback (Intelligent & Context Aware) ---
+    try {
+        if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "YOUR_API_KEY_HERE") {
+            return "I'm currently undergoing maintenance (API Key missing). Please ask about 'donating' or 'agents' in the meantime!";
+        }
 
-    if (msg.includes("login") || msg.includes("sign in")) {
-        return "Already have an account? Click 'Login' in the top right corner to access your dashboard.";
-    }
+        const systemContext = `
+            You are FoodBot, the intelligent assistant for the "FoodShare" food donation platform.
+            
+            Your Persona: Friendly, helpful, empathetic, and professional. Use emojis occasionally.
+            
+            About FoodShare:
+            - Mission: Zero Hunger, Zero Waste.
+            - We connect Donors (who have leftover food) with Agents (volunteers who pick it up) to feed the needy.
+            - We operate 24/7.
+            
+            User Context:
+            - Name: ${getUserName()}
+            - Role: ${getUserRole()} (guest, donor, agent, admin)
+            
+            Guidelines:
+            - Keep answers concise (under 3 sentences if possible).
+            - If asked about technical issues (password, bugs), direct them to support@foodshare.com.
+            - If asked about "how to donate", explain: Sign Up -> Dashboard -> Donate Food.
+            - If asked about "how to be an agent", explain: Sign Up -> Select Agent Role.
+            - Do NOT make up facts. If unsure, say you don't know.
+        `;
 
-    // Contact
-    if (msg.includes("contact") || msg.includes("support") || msg.includes("help")) {
-        return "You can reach our support team via the 'Contact Us' page, or email us at support@foodshare.com.";
-    }
+        const completion = await openai.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+                { role: "system", content: systemContext },
+                { role: "user", content: message }
+            ],
+        });
 
-    // Default
-    return "I'm not sure I understand. You can ask me about donating food, how the system works, or how to sign up.";
+        return completion.choices[0].message.content;
+
+    } catch (error) {
+        console.error("OpenAI API Error:", error);
+        return "I'm having trouble connecting to my brain right now. 🧠 Please try again later or ask simple questions about donating.";
+    }
 };
 
 module.exports = { processMessage };

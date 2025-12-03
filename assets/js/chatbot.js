@@ -84,13 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Insert before quick actions if they exist, otherwise append
         const quickActions = chatMessages.querySelector('.quick-actions');
-        if (quickActions && sender === 'bot') {
-            // If bot message, maybe we want to keep quick actions at the bottom? 
-            // For now, let's just append to the message list container, but we might want to move quick actions to the bottom.
-            // Actually, let's just append normally.
+        if (quickActions) {
             chatMessages.insertBefore(messageDiv, quickActions);
-            // Move quick actions to bottom
-            chatMessages.appendChild(quickActions);
         } else {
             chatMessages.appendChild(messageDiv);
         }
